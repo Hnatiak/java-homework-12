@@ -7,6 +7,13 @@ public class Task1 {
 
         timerThread.start();
         messageThread.start();
+
+        try {
+            timerThread.join();
+            messageThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
 
@@ -36,7 +43,7 @@ class MessageTask implements Runnable {
     public void run() {
         try {
             while (true) {
-                Thread.sleep(5000); // кожні 5 секунд
+                Thread.sleep(5000);
                 System.out.println("Минуло 5 секунд!");
             }
         } catch (InterruptedException e) {

@@ -1,12 +1,7 @@
 package com.example.customcollections.task2;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-
 public class Task2 {
-
     private final int n;
-    private final BlockingQueue<String> queue = new LinkedBlockingQueue<>();
 
     public Task2(int n) {
         this.n = n;
@@ -15,7 +10,7 @@ public class Task2 {
     public void fizz() {
         for (int i = 1; i <= n; i++) {
             if (i % 3 == 0 && i % 5 != 0) {
-                queue.add("fizz");
+                System.out.println("fizz");
             }
         }
     }
@@ -23,7 +18,7 @@ public class Task2 {
     public void buzz() {
         for (int i = 1; i <= n; i++) {
             if (i % 5 == 0 && i % 3 != 0) {
-                queue.add("buzz");
+                System.out.println("buzz");
             }
         }
     }
@@ -31,7 +26,7 @@ public class Task2 {
     public void fizzbuzz() {
         for (int i = 1; i <= n; i++) {
             if (i % 15 == 0) {
-                queue.add("fizzbuzz");
+                System.out.println("fizzbuzz");
             }
         }
     }
@@ -39,14 +34,9 @@ public class Task2 {
     public void number() {
         for (int i = 1; i <= n; i++) {
             if (i % 3 != 0 && i % 5 != 0) {
-                queue.add(String.valueOf(i));
+                System.out.println(i);
             }
         }
-    }
-
-    public void printAll() {
-        try { Thread.sleep(500); } catch (InterruptedException e) { }
-        queue.forEach(item -> System.out.print(item + ", "));
     }
 
     public static void main(String[] args) {
@@ -55,14 +45,20 @@ public class Task2 {
         Thread fizzThread = new Thread(fb::fizz);
         Thread buzzThread = new Thread(fb::buzz);
         Thread fizzbuzzThread = new Thread(fb::fizzbuzz);
-        Thread numberThread = new Thread(() -> {
-            fb.number();
-            fb.printAll();
-        });
+        Thread numberThread = new Thread(fb::number);
 
         fizzThread.start();
         buzzThread.start();
         fizzbuzzThread.start();
         numberThread.start();
+
+        try {
+            fizzThread.join();
+            buzzThread.join();
+            fizzbuzzThread.join();
+            numberThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
