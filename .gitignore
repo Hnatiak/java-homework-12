@@ -1,0 +1,26 @@
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# Java build outputs
+out/
+build/
+target/
+
+# Gradle
+.gradle/
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
+!gradlew
+!gradlew.bat
+
+# Logs and temp files
+*.log
+*.tmp
+*.swp
+*.bak
+*.class
+
+# System files
+.DS_Store
+Thumbs.db
