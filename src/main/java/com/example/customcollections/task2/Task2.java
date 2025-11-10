@@ -1,40 +1,57 @@
 package com.example.customcollections.task2;
 
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 public class Task2 {
     private final int n;
+    private int current = 1;
+    private final Lock lock = new ReentrantLock();
+    private final Condition condition = lock.newCondition();
 
     public Task2(int n) {
         this.n = n;
     }
 
     public void fizz() {
-        for (int i = 1; i <= n; i++) {
-            if (i % 3 == 0 && i % 5 != 0) {
-                System.out.println("fizz");
-            }
-        }
+        process(i -> i % 3 == 0 && i % 5 != 0, "fizz");
     }
 
     public void buzz() {
-        for (int i = 1; i <= n; i++) {
-            if (i % 5 == 0 && i % 3 != 0) {
-                System.out.println("buzz");
-            }
-        }
+        process(i -> i % 5 == 0 && i % 3 != 0, "buzz");
     }
 
     public void fizzbuzz() {
-        for (int i = 1; i <= n; i++) {
-            if (i % 15 == 0) {
-                System.out.println("fizzbuzz");
-            }
-        }
+        process(i -> i % 15 == 0, "fizzbuzz");
     }
 
     public void number() {
-        for (int i = 1; i <= n; i++) {
-            if (i % 3 != 0 && i % 5 != 0) {
-                System.out.println(i);
+        process(i -> i % 3 != 0 && i % 5 != 0, null);
+    }
+
+    private void process(java.util.function.Predicate<Integer> conditionCheck, String output) {
+        while (true) {
+            lock.lock();
+            try {
+                while (current <= n && !conditionCheck.test(current)) {
+                    condition.await();
+                }
+                if (current > n) {
+                    condition.signalAll();
+                    return;
+                }
+                if (output != null)
+                    System.out.println(output);
+                else
+                    System.out.println(current);
+                current++;
+                condition.signalAll();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return;
+            } finally {
+                lock.unlock();
             }
         }
     }
@@ -58,7 +75,7 @@ public class Task2 {
             fizzbuzzThread.join();
             numberThread.join();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Thread.currentThread().interrupt();
         }
     }
 }
