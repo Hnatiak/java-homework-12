@@ -41,10 +41,11 @@ public class Task2 {
                     condition.signalAll();
                     return;
                 }
-                if (output != null)
+                if (output != null) {
                     System.out.println(output);
-                else
+                } else {
                     System.out.println(current);
+                }
                 current++;
                 condition.signalAll();
             } catch (InterruptedException e) {
